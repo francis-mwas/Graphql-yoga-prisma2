@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model users {
+// }
+model User {
+  id       Int       @id @unique @default(autoincrement())
+  name     String
+  email    String @unique
+  age      Int
+  posts    Post[] 
+  comments Comment[]
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  body      String
+  published Boolean
+  author    User      @relation(fields: [userId], references: [id])
+  comments  Comment[]
+  userId    Int
+}
+
+model Comment {
+  id     Int    @id @default(autoincrement())
+  text   String
+  author User   @relation(fields: [userId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+  userId Int
+  postId Int
+}
